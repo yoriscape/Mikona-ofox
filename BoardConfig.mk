@@ -71,7 +71,7 @@ BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 BOARD_MKBOOTIMG_ARGS += --dtb_offset $(BOARD_DTB_OFFSET)
 
 # Kernel
-# whether to do an inline build of the kernel sources
+# whether to do an inline build of the kernel sources [broken for vendor_boot targets]
 ifeq ($(FOX_BUILD_FULL_KERNEL_SOURCES),1)
     TARGET_KERNEL_SOURCE := kernel/xiaomi/$(PRODUCT_RELEASE_NAME)
     TARGET_KERNEL_CONFIG := vendor/$(PRODUCT_RELEASE_NAME)-fox_defconfig
@@ -83,6 +83,8 @@ ifeq ($(FOX_BUILD_FULL_KERNEL_SOURCES),1)
     TARGET_KERNEL_CLANG_VERSION := 13.0.0
     TARGET_KERNEL_CLANG_PATH := $(shell pwd)/prebuilts/clang/host/linux-x86/clang-$(TARGET_KERNEL_CLANG_VERSION)
     TARGET_KERNEL_ADDITIONAL_FLAGS := DTC_EXT=$(shell pwd)/prebuilts/misc/$(HOST_OS)-x86/dtc/dtc
+    LLVM := 1
+    LLVM_IAS := 1
 else
     KERNEL_PATH := $(DEVICE_PATH)/prebuilt/$(PRODUCT_RELEASE_NAME)
     TARGET_PREBUILT_KERNEL := $(KERNEL_PATH)/Image.gz-dtb
