@@ -5,22 +5,38 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 
-DEVICE_PATH := device/xiaomi/mikona
+# Our various search paths for Soong namespaces
+MIKONA_SOONG_PATHS := device/xiaomi/mikona device/xiaomi/alioth device/xiaomi/munch
 
-# fscrypt policy
-TW_USE_FSCRYPT_POLICY := 2
-
-# Inherit from common AOSP config
+# Configure base.mk
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
+
+# Configure core_64_bit_only.mk
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
+
+# Configure gsi_keys.mk
+$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_keys.mk)
+
+# Configure Virtual A/B
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
 
 # Enable updating of APEXes
 $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 
-# Enable virtual A/B OTA
-$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
+PRODUCT_PACKAGES += \
+    bootctrl.xiaomi_sm8250.recovery \
+    android.hardware.boot@1.1-impl-qti.recovery
 
-# Installs gsi keys into ramdisk, to boot a developer GSI with verified boot.
-$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_keys.mk)
+# API
+PRODUCT_TARGET_VNDK_VERSION := 31
+PRODUCT_SHIPPING_API_LEVEL := 30
+
+# Soong namespaces
+PRODUCT_SOONG_NAMESPACES += \
+	$(MIKONA_SOONG_PATHS) \
+	vendor/qcom/opensource/commonsys-intf/display
+
+PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # vendor_boot-as-recovery
 ifeq ($(FOX_VENDOR_BOOT_RECOVERY),1)
@@ -58,10 +74,6 @@ PRODUCT_PACKAGES += \
 endif
 # end: vendor_boot-as-recovery
 
-# API
-PRODUCT_TARGET_VNDK_VERSION := 31
-PRODUCT_SHIPPING_API_LEVEL := 30
-
 # A/B
 ENABLE_VIRTUAL_AB := true
 AB_OTA_UPDATER := true
@@ -91,19 +103,6 @@ AB_OTA_POSTINSTALL_CONFIG += \
     FILESYSTEM_TYPE_system=ext4 \
     POSTINSTALL_OPTIONAL_system=true
 
-PRODUCT_PACKAGES += \
-    android.hardware.boot@1.2-impl-qti \
-    android.hardware.boot@1.2-impl-qti.recovery \
-    android.hardware.boot@1.2-service \
-    bootctrl.mikona \
-    bootctrl.mikona.recovery
-	
-PRODUCT_PACKAGES_DEBUG += \
-    bootctl	
-
-# Dynamic partitions
-PRODUCT_USE_DYNAMIC_PARTITIONS := true
-
 # fastbootd
 PRODUCT_PACKAGES += \
     android.hardware.fastboot@1.0-impl-mock \
@@ -114,10 +113,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     qcom_decrypt \
     qcom_decrypt_fbe
-
-# Soong namespaces
-PRODUCT_SOONG_NAMESPACES += \
-    vendor/qcom/opensource/commonsys-intf/display
 
 # Crypto
 TW_INCLUDE_CRYPTO := true
@@ -158,8 +153,4 @@ RECOVERY_LIBRARY_SOURCE_FILES += \
 # OEM otacert
 PRODUCT_EXTRA_RECOVERY_KEYS += \
     vendor/recovery/security/miui
-
-# device name
-#PRODUCT_PROPERTY_OVERRIDES += \
-#	ro.product.device=$(PRODUCT_RELEASE_NAME)
 #
