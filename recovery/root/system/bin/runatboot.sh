@@ -1,4 +1,4 @@
-#!/sbin/sh
+#!/system/bin/sh
 #
 #	This file is part of the OrangeFox Recovery Project
 # 	Copyright (C) 2019-2023 The OrangeFox Recovery Project
@@ -34,7 +34,7 @@ set_read_write_partitions() {
   local Parts="system system_ext vendor product odm";
   
   # loop through
-  for i in ${Parts}
+  for i in $Parts
   do
      echo "I:OrangeFox: setting $i to read/write" >> /tmp/recovery.log;
      blockdev --setrw /dev/block/mapper/$i"$slot";
