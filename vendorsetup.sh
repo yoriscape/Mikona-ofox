@@ -81,7 +81,11 @@ if [ "$1" = "$FDEVICE" -o "$FOX_BUILD_DEVICE" = "$FDEVICE" -o "$FOX_BUILD_DEVICE
 	if [ "$FOX_VENDOR_BOOT_RECOVERY" = "1" ]; then
 	   export FOX_RESET_SETTINGS="disabled"
 	   export FOX_VARIANT="vBaR"
-	   #export OF_USE_LZ4_COMPRESSION=1; # this can cause a bootloop in some ROMs, so don't use it
+	fi
+
+	#lz4; this can cause a bootloop in some ROMs, so don't use it except for lz4 ROMs
+	if [ "$OF_USE_LZ4_COMPRESSION" = "1" ]; then
+	   export FOX_VARIANT="lz4"
 	fi
 else
 	if [ -z "$FOX_BUILD_DEVICE" -a -z "$BASH_SOURCE" ]; then
