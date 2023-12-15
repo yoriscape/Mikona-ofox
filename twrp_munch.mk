@@ -8,7 +8,7 @@
 # Release name
 PRODUCT_RELEASE_NAME := munch
 
-DEVICE_PATH=device/xiaomi/mikona
+DEVICE_PATH := device/xiaomi/mikona
 
 # Inherit from mikona device
 $(call inherit-product, $(DEVICE_PATH)/device.mk)
@@ -21,7 +21,7 @@ $(call inherit-product, vendor/twrp/config/common.mk)
 
 # Device identifier. This must come after all inclusions.
 PRODUCT_NAME := twrp_$(PRODUCT_RELEASE_NAME)
-PRODUCT_DEVICE := mikona
+PRODUCT_DEVICE := $(PRODUCT_RELEASE_NAME)
 PRODUCT_BRAND := POCO
 PRODUCT_MANUFACTURER := Xiaomi
 PRODUCT_MODEL := POCO F4
