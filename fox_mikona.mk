@@ -45,4 +45,6 @@ OF_DISABLE_OTA_MENU := 1
 # full size
 OF_DYNAMIC_FULL_SIZE := 9126805504
 
+# number of list options before scrollbar creation
+OF_OPTIONS_LIST_NUM := 6
 #
