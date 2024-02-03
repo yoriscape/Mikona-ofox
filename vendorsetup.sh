@@ -1,6 +1,6 @@
 #
 #	This file is part of the OrangeFox Recovery Project
-# 	Copyright (C) 2021-2023 The OrangeFox Recovery Project
+# 	Copyright (C) 2021-2024 The OrangeFox Recovery Project
 #
 #	OrangeFox is free software: you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ if [ "$1" = "$FDEVICE" -o "$FOX_BUILD_DEVICE" = "$FDEVICE" -o "$FOX_BUILD_DEVICE
     	export FOX_BUGGED_AOSP_ARB_WORKAROUND="1616300800"; # Sun 21 Mar 04:26:40 GMT 2021
 
     	# Device Specific Props
- 	if [ "$FOX_BUILD_DEVICE" = "$FDEVICE2" -o  "$FDEVICE" = "$FDEVICE2" ]; then
+ 	if [ "$FOX_BUILD_DEVICE" = "$FDEVICE2" -o "$FDEVICE" = "$FDEVICE2" ]; then
     	   echo "Device is $FDEVICE2 ..."
  	else
     	   echo "Device is alioth ..."
@@ -79,7 +79,6 @@ if [ "$1" = "$FDEVICE" -o "$FOX_BUILD_DEVICE" = "$FDEVICE" -o "$FOX_BUILD_DEVICE
 
 	# vendor_boot-as-recovery
 	if [ "$FOX_VENDOR_BOOT_RECOVERY" = "1" ]; then
-	   export FOX_RESET_SETTINGS="disabled"
 	   export FOX_VARIANT="vBaR"
 	fi
 
