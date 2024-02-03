@@ -1,7 +1,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-# Copyright (C) 2022-2023 The OrangeFox Recovery Project
+# Copyright (C) 2022-2024 The OrangeFox Recovery Project
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 
@@ -106,7 +106,6 @@ else
     BOARD_PREBUILT_DTBOIMAGE := $(KERNEL_PATH)/dtbo.img
     BOARD_PREBUILT_DTBIMAGE_DIR := $(KERNEL_PATH)/dtbs
 endif
-#
 
 #A/B
 BOARD_USES_RECOVERY_AS_BOOT := true
@@ -191,11 +190,18 @@ PRODUCT_COPY_FILES += $(DEVICE_PATH)/recovery/$(PRODUCT_RELEASE_NAME)/unified-sc
 
 # vendor_boot as recovery?
 ifeq ($(FOX_VENDOR_BOOT_RECOVERY),1)
-  BOARD_USES_RECOVERY_AS_BOOT := false
-  BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT := true
+  BOARD_USES_RECOVERY_AS_BOOT :=
+  BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE :=
   BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT := true
-  BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE := false
   BOARD_USES_GENERIC_KERNEL_IMAGE := true
   BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT := true
+  ifeq ($(BOARD_BOOT_HEADER_VERSION),4)
+      BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT := true
+  endif
+
+  ifneq ($(FOX_VENDOR_BOOT_RECOVERY_FULL_REFLASH),1)
+  # disable the reflash menu, until all vendor_boot ROMs have a v4 header - else it won't work
+      OF_NO_REFLASH_CURRENT_ORANGEFOX := 1
+  endif
 endif
 #
