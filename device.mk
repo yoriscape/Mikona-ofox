@@ -1,7 +1,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-# Copyright (C) 2022-2023 The OrangeFox Recovery Project
+# Copyright (C) 2022-2024 The OrangeFox Recovery Project
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 
@@ -41,46 +41,8 @@ PRODUCT_SOONG_NAMESPACES += \
 
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
-# vendor_boot-as-recovery
-ifeq ($(FOX_VENDOR_BOOT_RECOVERY),1)
-
-$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/launch_with_vendor_ramdisk.mk)
-
-$(call inherit-product, $(SRC_TARGET_DIR)/product/generic_ramdisk.mk)
-
-# Enable project quotas and casefolding for emulated storage without sdcardfs
-$(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
-
-# -------------------- 20230724: fs compression --------------------
-  PRODUCT_FS_COMPRESSION := true
-  OF_ENABLE_FS_COMPRESSION := 1
-  # this can be used instead of "OF_ENABLE_FS_COMPRESSION"
-  PRODUCT_VENDOR_PROPERTIES += vold.has_compress=true
-
-  # compare build/make/target/product/virtual_ab_ota/android_t_baseline.mk (A13 manifest)
-  PRODUCT_VIRTUAL_AB_COMPRESSION := true
-  PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.enabled=true
-  PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.xor.enabled=true
-  PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.userspace.snapshots.enabled=true
-  PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.io_uring.enabled=true
-# -------------------- 20230724: fs compression --------------------
-
-PRODUCT_COPY_FILES += \
-    $(DEVICE_PATH)/recovery/root/fstab-generic.qcom:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.qcom
-#    $(DEVICE_PATH)/recovery/root/fstab.qcom:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.qcom
-
-PRODUCT_PACKAGES += \
-    linker.vendor_ramdisk \
-    resize2fs.vendor_ramdisk \
-    fsck.vendor_ramdisk \
-    tune2fs.vendor_ramdisk
-endif
-# end: vendor_boot-as-recovery
-
 # A/B
-ENABLE_VIRTUAL_AB := true
 AB_OTA_UPDATER := true
-
 AB_OTA_PARTITIONS += \
     boot \
     dtbo \
@@ -156,4 +118,26 @@ RECOVERY_LIBRARY_SOURCE_FILES += \
 # OEM otacert
 PRODUCT_EXTRA_RECOVERY_KEYS += \
     vendor/recovery/security/miui
-#
+
+# vendor_boot
+ifeq ($(FOX_VENDOR_BOOT_RECOVERY),1)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/launch_with_vendor_ramdisk.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic_ramdisk.mk)
+# Enable project quotas and casefolding for emulated storage without sdcardfs
+$(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
+
+PRODUCT_PACKAGES += \
+	linker.vendor_ramdisk \
+	e2fsck.vendor_ramdisk \
+	resize2fs.vendor_ramdisk \
+	fsck.vendor_ramdisk \
+	tune2fs.vendor_ramdisk
+
+# BOARD_RAMDISK_USE_LZ4 := true
+
+# copy vendor_boot fstab to first_stage_ramdisk
+PRODUCT_COPY_FILES += \
+	$(DEVICE_PATH)/recovery/root/fstab-generic.qcom:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.qcom
+	# $(DEVICE_PATH)/recovery/root/fstab.qcom:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.qcom
+endif
+# end: vendor_boot
